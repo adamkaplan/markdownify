@@ -5,11 +5,11 @@ module.exports = app => {
     issueParams['pull_number'] = issueParams['number']
     delete issueParams['number']
 
-    const results = await context.github.paginate(context.github.pulls.listFiles.endpoint.merge(issueParams, response => {                                                                
-      response.data.filter(entry => {
-        entry.status === 'added' && entry.filename.endsWith('.md')
+    const results = await context.github.paginate(context.github.pulls.listFiles.endpoint.merge(issueParams), response => {
+      return response.data.filter(entry => {
+        return (entry.status === 'added' || entry.status === 'modified') && entry.filename.endsWith('.md')
       })
-    }))
+    })
 
     if (results && results.length > 0) {
       // make URLs
