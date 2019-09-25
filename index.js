@@ -5,8 +5,8 @@ module.exports = app => {
     issueParams['pull_number'] = issueParams['number']
     delete issueParams['number']
     
-    const filesChanged = await context.github.pulls.listFiles(issueParams)
-    const results = filesChanged.data.filter(file => file.filename.includes('.md'))
+    const filesChanged = await context.github.paginate(context.github.pulls.listFiles.endpoint.merge(issueParams))
+    const results = filesChanged.data.filter(file => file.filename.endsWith('.md'))
     if (results && results.length > 0) {
       // make URLs
       let urls = ''
