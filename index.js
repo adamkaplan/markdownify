@@ -1,6 +1,11 @@
 module.exports = app => {
   app.on('pull_request.opened', async context => {
-    const filesChanged = await context.github.pullRequests.getFiles(context.issue())
+    // Correct for deprecation in github pulls API
+    var issueParams = context.issue()                                                                                                                                                     
+    issueParams['pull_number'] = issueParams['number']
+    delete issueParams['number']
+    
+    const filesChanged = await context.github.pulls.listFiles(issueParams)
     const results = filesChanged.data.filter(file => file.filename.includes('.md'))
     if (results && results.length > 0) {
       // make URLs
