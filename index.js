@@ -1,10 +1,10 @@
 module.exports = app => {
   app.on('pull_request.opened', async context => {
     // Correct for deprecation in github pulls API
-    var issueParams = context.issue()                                                                                                                                                     
+    var issueParams = context.issue()
     issueParams['pull_number'] = issueParams['number']
     delete issueParams['number']
-    
+
     const filesChanged = await context.github.paginate(context.github.pulls.listFiles.endpoint.merge(issueParams))
     const results = filesChanged.data.filter(file => file.filename.endsWith('.md'))
     if (results && results.length > 0) {
